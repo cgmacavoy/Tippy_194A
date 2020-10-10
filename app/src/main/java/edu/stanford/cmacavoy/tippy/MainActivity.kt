@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         seekBarTip.progress = INITIAL_TIP_PERCENT
         tvTipPercent.text = "$INITIAL_TIP_PERCENT%"
+        split1.isChecked = true
         updateTipDescription(INITIAL_TIP_PERCENT)
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -46,6 +49,10 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
         })
+
+        split.setOnCheckedChangeListener { _, _ ->
+            createTipAndTotal()
+        }
     }
 
     private fun updateTipDescription(tipPercent: Int) {
@@ -74,7 +81,12 @@ class MainActivity : AppCompatActivity() {
         val tipPercent = seekBarTip.progress
         val tipAmount = baseAmount * tipPercent / 100
         val totalAmount = baseAmount + tipAmount
+        val numSplits : RadioButton = findViewById(split.checkedRadioButtonId)
+        val splits = numSplits.text.toString().toDouble()
+        Log.i(TAG, "splits $numSplits")
+        val splitAmt = totalAmount / splits
         tvTipAmount.text = "%.2f".format(tipAmount)
         tvTotalAmount.text = "%.2f".format(totalAmount)
+        tvTotalAmountPer.text = "%.2f".format(splitAmt)
     }
 }
